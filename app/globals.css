@@ -1,0 +1,127 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-ink text-paper font-body antialiased;
+  }
+
+  ::selection {
+    background: #e8a33d;
+    color: #12151c;
+  }
+
+  /* Quiet, thin focus ring in the signal color */
+  :focus-visible {
+    outline: 2px solid #e8a33d;
+    outline-offset: 2px;
+  }
+}
+
+@layer components {
+  /* Mono utility label: uppercase, letter-spaced, small */
+  .eyebrow {
+    @apply font-mono text-label uppercase tracking-[0.12em] text-signal;
+  }
+
+  .meta {
+    @apply font-mono text-label uppercase tracking-[0.12em] text-paper/50;
+  }
+
+  /* Hairline rule that encodes structure between sections */
+  .rule-t {
+    @apply border-t border-rule;
+  }
+
+  .container-x {
+    @apply mx-auto w-full max-w-content px-6 md:px-10;
+  }
+
+  /* Primary CTA — amber, used sparingly */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded bg-signal px-5 py-3
+      font-mono text-label uppercase tracking-[0.1em] text-ink transition-colors
+      hover:bg-[#f2b658];
+  }
+
+  /* Secondary — outlined, quiet */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded border border-rule px-5 py-3
+      font-mono text-label uppercase tracking-[0.1em] text-paper transition-colors
+      hover:border-paper/40 hover:bg-surface;
+  }
+
+  .link-quiet {
+    @apply text-paper/70 transition-colors hover:text-paper;
+  }
+}
+
+/* ---- Article typography (rendered markdown) ---- */
+.prose-deepak {
+  @apply text-lead text-paper/80;
+}
+.prose-deepak > * + * {
+  @apply mt-6;
+}
+.prose-deepak h2 {
+  @apply mt-12 font-display text-h2 text-paper;
+}
+.prose-deepak h3 {
+  @apply mt-10 font-display text-h3 text-paper;
+}
+.prose-deepak p {
+  @apply text-lead leading-[1.7] text-paper/80;
+}
+.prose-deepak strong {
+  @apply font-semibold text-paper;
+}
+.prose-deepak a {
+  @apply text-signal underline underline-offset-4;
+}
+.prose-deepak ul {
+  @apply list-disc space-y-2 pl-6 text-paper/80;
+}
+.prose-deepak ol {
+  @apply list-decimal space-y-2 pl-6 text-paper/80;
+}
+.prose-deepak blockquote {
+  @apply border-l-2 border-signal pl-5 italic text-paper/70;
+}
+.prose-deepak code {
+  @apply rounded bg-surface px-1.5 py-0.5 font-mono text-[0.9em] text-paper;
+}
+.prose-deepak hr {
+  @apply my-10 border-rule;
+}
+
+/* ---- Growth curve draw-in animation ---- */
+.curve-path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: curve-draw 0.85s ease forwards;
+}
+
+@keyframes curve-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .curve-path {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
