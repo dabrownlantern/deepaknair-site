@@ -5,7 +5,7 @@ export default function CaseStudyCard({ study }: { study: CaseStudy }) {
   return (
     <Link
       href={`/work/${study.slug}`}
-      className="group flex flex-col border border-rule bg-surface p-6 transition-colors hover:border-signal/50"
+      className="group flex flex-col border border-rule bg-surface/90 p-6 transition-colors hover:border-signal/50"
     >
       <div className="flex items-baseline justify-between gap-4">
         <p className="eyebrow">{study.org}</p>

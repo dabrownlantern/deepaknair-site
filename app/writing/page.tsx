@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import NewsletterSignup from "@/components/NewsletterSignup";
 import { getAllPosts, formatDate } from "@/lib/posts";
 
 export const metadata: Metadata = {
@@ -22,6 +23,9 @@ export default function WritingPage() {
           Notes from a decade on the side of the business that decides whether
           creators actually succeed.
         </p>
+        <div className="mt-8 max-w-md">
+          <NewsletterSignup />
+        </div>
       </section>
 
       <section className="rule-t">

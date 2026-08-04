@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    color-scheme: dark;
+    color-scheme: light;
   }
 
   html {
@@ -17,12 +17,12 @@
 
   ::selection {
     background: #e8a33d;
-    color: #12151c;
+    color: #1b1e24;
   }
 
   /* Quiet, thin focus ring in the signal color */
   :focus-visible {
-    outline: 2px solid #e8a33d;
+    outline: 2px solid #9c5d0a;
     outline-offset: 2px;
   }
 }
@@ -48,8 +48,8 @@
 
   /* Primary CTA — amber, used sparingly */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded bg-signal px-5 py-3
-      font-mono text-label uppercase tracking-[0.1em] text-ink transition-colors
+    @apply inline-flex items-center justify-center gap-2 rounded bg-signal-bright px-5 py-3
+      font-mono text-label uppercase tracking-[0.1em] text-paper transition-colors
       hover:bg-[#f2b658];
   }
 

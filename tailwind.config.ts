@@ -9,13 +9,17 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Studio Build palette
-        ink: "#12151C", // deep slate, near-black with a blue cast (base)
-        surface: "#1A1F29", // raised panels, cards
-        paper: "#F2EFE9", // warm off-white
-        signal: "#E8A33D", // amber. Accent, CTAs, growth curves
-        growth: "#6FA88C", // muted sage. Data viz secondary, success
-        rule: "#2E3541", // hairlines, dividers, borders
+        // Studio Build palette — light. Token names kept from the dark
+        // version so component classes didn't need to change: `ink` is
+        // still the base background, `paper` is still the primary text
+        // color, they've just swapped which end of the scale they sit on.
+        ink: "#FFFFFF", // base background, pure white
+        surface: "#F6F4EE", // raised panels, cards — warm off-white
+        paper: "#1B1E24", // primary text, near-black with a blue cast
+        signal: "#9C5D0A", // amber, darkened for AA contrast as text on white
+        "signal-bright": "#E8A33D", // original bright amber — button fills only (dark text on top)
+        growth: "#3F7A5B", // muted sage, darkened for visibility on white
+        rule: "#E4E0D6", // hairlines, dividers, borders — warm light gray
       },
       fontFamily: {
         display: ["var(--font-display)", "system-ui", "sans-serif"],

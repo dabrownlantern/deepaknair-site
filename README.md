@@ -63,6 +63,10 @@ content/
    any client logos need written permission before this is public. All three
    case studies are currently included.
 4. **Domain.** Metadata assumes `deepaknair.com` (`lib/site.ts` → `domain`).
+5. **Newsletter.** `lib/site.ts` → `newsletterUrl` is a placeholder
+   (`https://deepaknair.substack.com`). Replace it with your real Substack
+   URL once the publication exists — until then the embed on `/writing` and
+   the homepage will 404.
 
 ## Adding a writing post
 

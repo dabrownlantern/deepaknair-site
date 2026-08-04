@@ -18,7 +18,7 @@ const curves: Curve[] = [
     key: "roblox",
     label: "Roblox",
     range: "few hundred → 3M+",
-    color: "#E8A33D",
+    color: "#C97B12",
     d: "M64,291 C 260,288 380,120 560,48",
     end: [560, 48],
     sentence:
@@ -28,7 +28,7 @@ const curves: Curve[] = [
     key: "fortnite",
     label: "Fortnite Creative",
     range: "10K → 100K",
-    color: "#6FA88C",
+    color: "#3F7A5B",
     d: "M64,199 C 240,196 380,150 560,138",
     end: [560, 138],
     sentence:
@@ -38,7 +38,7 @@ const curves: Curve[] = [
     key: "horizon",
     label: "Meta Horizon",
     range: "2K → 20K",
-    color: "#8896A6",
+    color: "#5B6675",
     d: "M64,241 C 240,238 380,196 560,180",
     end: [560, 180],
     sentence:
@@ -65,9 +65,9 @@ export default function GrowthCurves() {
         onMouseLeave={() => setActive(null)}
       >
         {/* axes */}
-        <line x1="64" y1="40" x2="64" y2="320" stroke="#2E3541" strokeWidth="1" />
-        <line x1="64" y1="320" x2="590" y2="320" stroke="#2E3541" strokeWidth="1" />
-        <path d="M590,320 l-7,-4 l0,8 z" fill="#2E3541" />
+        <line x1="64" y1="40" x2="64" y2="320" stroke="#B8B2A2" strokeWidth="1" />
+        <line x1="64" y1="320" x2="590" y2="320" stroke="#B8B2A2" strokeWidth="1" />
+        <path d="M590,320 l-7,-4 l0,8 z" fill="#B8B2A2" />
 
         {/* gridlines + y labels */}
         {gridlines.map((g) => (
@@ -77,7 +77,7 @@ export default function GrowthCurves() {
               y1={g.y}
               x2="560"
               y2={g.y}
-              stroke="#2E3541"
+              stroke="#DAD5C8"
               strokeWidth="1"
               strokeDasharray="2 5"
             />
@@ -88,8 +88,8 @@ export default function GrowthCurves() {
               className="font-mono"
               fontSize="11"
               letterSpacing="0.06em"
-              fill="#F2EFE9"
-              fillOpacity="0.5"
+              fill="#1B1E24"
+              fillOpacity="0.55"
             >
               {g.label}
             </text>
@@ -103,8 +103,8 @@ export default function GrowthCurves() {
           className="font-mono"
           fontSize="11"
           letterSpacing="0.12em"
-          fill="#F2EFE9"
-          fillOpacity="0.5"
+          fill="#1B1E24"
+          fillOpacity="0.55"
         >
           CREATORS
         </text>
@@ -114,8 +114,8 @@ export default function GrowthCurves() {
           className="font-mono"
           fontSize="11"
           letterSpacing="0.12em"
-          fill="#F2EFE9"
-          fillOpacity="0.5"
+          fill="#1B1E24"
+          fillOpacity="0.55"
         >
           TIME
         </text>
@@ -157,7 +157,7 @@ export default function GrowthCurves() {
                 className="font-mono"
                 fontSize="11"
                 letterSpacing="0.04em"
-                fill="#F2EFE9"
+                fill="#1B1E24"
                 fillOpacity="0.55"
               >
                 {c.range}

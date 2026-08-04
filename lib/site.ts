@@ -6,10 +6,12 @@ export const site = {
   // TODO: replace with your real Cal.com link, e.g. "https://cal.com/deepaknair/30min"
   bookingUrl: "#book",
   bookingLabel: "Book a call",
-  email: "hello@deepaknair.com", // TODO: replace with your real contact email
+  email: "deepak.nair17@gmail.com",
   domain: "deepaknair.com",
+  // TODO: replace with your real Substack, e.g. "https://deepaknair.substack.com"
+  newsletterUrl: "https://deepaknair.substack.com",
   metaDescription:
-    "Deepak Nair builds creator ecosystems for platforms, studios, and brands. Founding developer relations at Roblox and Epic's Fortnite Creative. Creator program strategy, UGC platform launch, and games publishing advisory.",
+    "Deepak Nair builds creator ecosystems for platforms, studios, brands, and media companies. Founding developer relations at Roblox and Epic's Fortnite Creative. Creator program strategy, UGC platform launch, and game publishing advisory.",
 };
 
 export const nav = [

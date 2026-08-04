@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "Three products: Ecosystem Audit, Launch & GTM Strategy, and Fractional Creator Lead. Named, scoped, and priced.",
+    "Four products: Ecosystem Audit, Launch & GTM Strategy, Game Launch & Publishing Advisory, and Fractional Creator Lead. Named, scoped, and priced.",
 };
 
 export default function ServicesPage() {
