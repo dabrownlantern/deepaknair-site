@@ -60,8 +60,14 @@ export default async function CaseStudyPage({
         <h1 className="mt-4 max-w-3xl font-display text-h1 text-paper">
           {study.title}
         </h1>
-        <div className="mt-8 flex items-baseline gap-4 border-t border-rule pt-6">
-          <span className="font-display text-display text-signal">
+        <div
+          className="mt-8 flex items-baseline gap-4 border-t pt-6"
+          style={{ borderTopColor: study.clusterColor, borderTopWidth: "3px" }}
+        >
+          <span
+            className="font-display text-display"
+            style={{ color: study.clusterColor }}
+          >
             {study.metric}
           </span>
           <span className="meta">{study.metricLabel}</span>

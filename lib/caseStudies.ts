@@ -59,6 +59,26 @@ export const caseStudies: CaseStudy[] = [
     clusterColor: "#3F7A5B",
   },
   {
+    slug: "meta-horizon",
+    org: "Meta",
+    title: "Opening a closed platform's creator program",
+    summary:
+      "Ran the creator program through Horizon's transition from a closed platform to an open one — 2K to 20K creators.",
+    metric: "10x",
+    metricLabel: "creator program growth",
+    context:
+      "Meta Horizon was a closed platform when the creator program started, and the growth ceiling was structural: no discovery surface, no path in for outsiders, and little reason for a serious creator to bet on it yet.",
+    problem:
+      "A closed platform can't grow a creator ecosystem the way an open one can. Opening it up wasn't just a product decision — it was a program decision. Someone had to make the creator side of that transition actually work: onboarding, discovery, and support all had to scale the moment the doors opened.",
+    whatIDid:
+      "Led the creator program through the closed-to-open transition. Rebuilt onboarding, discovery, and creator support for a population that suddenly needed to be findable, supportable, and payable at 10x the previous scale.",
+    outcome:
+      "The creator base grew from around 2,000 to around 20,000 as Horizon opened up.",
+    whatTransfers:
+      "Opening a platform is a program problem before it's a product problem. If the surfaces creators need to be seen, supported, and paid aren't ready before the doors open, the 10x you unlocked churns before it compounds.",
+    clusterColor: "#466791",
+  },
+  {
     slug: "nitrate-games",
     org: "Nitrate Games",
     title: "Publishing strategy for a licensed-IP slate",

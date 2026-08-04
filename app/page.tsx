@@ -24,7 +24,11 @@ const heroClusters: ClusterLabel[] = [
     metric: "10K → 100K creators — click to read",
     href: "/work/epic",
   },
-  { name: "Meta Horizon", metric: "2K → 20K creators (case study coming)" },
+  {
+    name: "Meta Horizon",
+    metric: "2K → 20K creators — click to read",
+    href: "/work/meta-horizon",
+  },
   {
     name: "Nitrate Games",
     metric: "SDCC announce, fractional VP — click to read",
@@ -155,14 +159,14 @@ export default function HomePage() {
             <div>
               <p className="eyebrow">Selected work</p>
               <h2 className="mt-4 font-display text-h2 text-paper">
-                Same shape, three times, on purpose.
+                Same shape, every time, on purpose.
               </h2>
             </div>
             <Link href="/work" className="link-quiet font-mono text-label uppercase tracking-[0.1em]">
               All case studies →
             </Link>
           </div>
-          <div className="mt-10 grid gap-6 md:grid-cols-3">
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {caseStudies.map((c) => (
               <CaseStudyCard key={c.slug} study={c} />
             ))}
