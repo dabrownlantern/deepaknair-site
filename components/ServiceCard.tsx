@@ -5,7 +5,7 @@ export default function ServiceCard({ service }: { service: Service }) {
   return (
     <Link
       href={`/services#${service.slug}`}
-      className="group flex flex-col border border-rule bg-surface/90 p-6 transition-colors hover:border-signal/50"
+      className="group flex flex-col border border-rule bg-surface p-6 transition-colors hover:border-signal/50"
     >
       <p className="eyebrow">{service.investment}</p>
       <h3 className="mt-3 font-display text-h3 text-paper">{service.name}</h3>

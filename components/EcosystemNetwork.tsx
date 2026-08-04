@@ -11,13 +11,21 @@ type Node3D = {
   oz: number;
   kind: Kind;
   color: string;
+  // Cluster index each node belongs to. -1 for the hub itself.
+  cluster: number;
 };
 
 type Edge = {
   a: number;
   b: number;
   color: string;
+  cluster: number; // same convention; -1 for hub links & weak ties
   weak?: boolean;
+};
+
+export type ClusterLabel = {
+  name: string;
+  metric: string;
 };
 
 const HUB_COLOR = "156, 93, 10"; // signal amber — the hub is the brand center
@@ -27,41 +35,52 @@ const NEUTRAL = "90, 88, 82"; // warm gray — weak cross-ties only
 // clusters read as distinct — different creator ecosystems radiating from
 // one center, not a monochrome mesh.
 const PALETTE = [
-  "156, 93, 10", // amber
-  "63, 122, 91", // sage
-  "70, 103, 145", // slate blue
-  "163, 92, 87", // terracotta
-  "58, 128, 130", // teal
-  "138, 108, 168", // muted violet
+  "156, 93, 10", // amber      → Roblox
+  "63, 122, 91", // sage       → Fortnite Creative
+  "70, 103, 145", // slate blue → Meta Horizon
+  "163, 92, 87", // terracotta → Nitrate Games
+  "58, 128, 130", // teal       → Steam / indie
+  "138, 108, 168", // muted violet → Media
 ];
 
 // Camera distance as a multiple of the sphere radius. Lower = stronger
 // perspective (bigger swing between near/far scale), higher = flatter.
 const CAMERA_MULT = 3.8;
 
+// How close the mouse (in screen px) must be to a branch node to
+// "select" that cluster on hover.
+const HIT_RADIUS = 60;
+
 type Props = {
+  // When present, each cluster is labeled and hover-interactive. Length
+  // determines the number of branches (so clusters exactly match your
+  // ecosystems, not an arbitrary count).
+  labels?: ClusterLabel[];
   // Set false for a decorative, non-rotating instance elsewhere on the page.
   animate?: boolean;
   // Multiplies every alpha value — use <1 for a quieter background texture.
+  // Labels ignore this and stay legible.
   opacityScale?: number;
-  // Fewer branches/leaves reads as sparser texture rather than a hero centerpiece.
+  // Ignored if `labels` is provided (labels.length wins).
   branchCount?: number;
   // Offsets the starting rotation so repeated instances don't look identical.
   seedAngle?: number;
 };
 
-// Full-bleed 3D node graph — a central hub branching into clusters, like a
-// mind map you could walk around. Reused at full strength (animated) in the
-// hero, and at reduced density/opacity (static) as a texture elsewhere on
-// the page, so the "ecosystem" motif carries through instead of living only
-// in the hero.
+// Slowly-rotating 3D node graph — a central hub branching into clusters,
+// like a mind map you could walk around. When `labels` is passed each
+// cluster is named and hover-interactive: hover a cluster to brighten it,
+// dim the rest, and see its metric callout.
 export default function EcosystemNetwork({
+  labels,
   animate = true,
   opacityScale = 1,
-  branchCount = 8,
+  branchCount,
   seedAngle = 0.4,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const effectiveBranchCount = labels ? labels.length : (branchCount ?? 8);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -81,16 +100,22 @@ export default function EcosystemNetwork({
     let start = 0;
     let minScale = 0.6;
     let maxScale = 1.6;
+    // Mouse tracking + which cluster is currently under the cursor.
+    let mouseX = -9999;
+    let mouseY = -9999;
+    let hovered: number | null = null;
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     function buildGraph() {
-      nodes = [{ ox: 0, oy: 0, oz: 0, kind: "hub", color: HUB_COLOR }];
+      nodes = [
+        { ox: 0, oy: 0, oz: 0, kind: "hub", color: HUB_COLOR, cluster: -1 },
+      ];
       edges = [];
 
       const golden = Math.PI * (3 - Math.sqrt(5));
 
-      for (let i = 0; i < branchCount; i++) {
-        const t = (i + 0.5) / branchCount;
+      for (let i = 0; i < effectiveBranchCount; i++) {
+        const t = (i + 0.5) / effectiveBranchCount;
         const inclination = Math.acos(1 - 2 * t);
         const azimuth = golden * i;
         const bx = Math.sin(inclination) * Math.cos(azimuth);
@@ -98,8 +123,15 @@ export default function EcosystemNetwork({
         const bz = Math.cos(inclination);
         const branchIdx = nodes.length;
         const clusterColor = PALETTE[i % PALETTE.length];
-        nodes.push({ ox: bx, oy: by, oz: bz, kind: "branch", color: clusterColor });
-        edges.push({ a: 0, b: branchIdx, color: clusterColor });
+        nodes.push({
+          ox: bx,
+          oy: by,
+          oz: bz,
+          kind: "branch",
+          color: clusterColor,
+          cluster: i,
+        });
+        edges.push({ a: 0, b: branchIdx, color: clusterColor, cluster: i });
 
         const leafCount = 3 + (i % 3);
         for (let j = 0; j < leafCount; j++) {
@@ -108,8 +140,20 @@ export default function EcosystemNetwork({
           const ly = by * (1 + spread) + (Math.random() - 0.5) * 0.3;
           const lz = bz * (1 + spread) + (Math.random() - 0.5) * 0.3;
           const leafIdx = nodes.length;
-          nodes.push({ ox: lx, oy: ly, oz: lz, kind: "leaf", color: clusterColor });
-          edges.push({ a: branchIdx, b: leafIdx, color: clusterColor });
+          nodes.push({
+            ox: lx,
+            oy: ly,
+            oz: lz,
+            kind: "leaf",
+            color: clusterColor,
+            cluster: i,
+          });
+          edges.push({
+            a: branchIdx,
+            b: leafIdx,
+            color: clusterColor,
+            cluster: i,
+          });
         }
       }
 
@@ -121,7 +165,7 @@ export default function EcosystemNetwork({
       for (let i = 0; i < branchIndices.length; i++) {
         const a = branchIndices[i];
         const b = branchIndices[(i + 3) % branchIndices.length];
-        edges.push({ a, b, color: NEUTRAL, weak: true });
+        edges.push({ a, b, color: NEUTRAL, cluster: -1, weak: true });
       }
     }
 
@@ -136,8 +180,6 @@ export default function EcosystemNetwork({
       canvas!.style.height = `${height}px`;
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-      // Precompute the achievable scale range for this radius/camera so
-      // alpha and size can be normalized to it below, instead of guessing.
       const camDist = CAMERA_MULT;
       minScale = camDist / (camDist + 1.75);
       maxScale = camDist / (camDist - 1.75);
@@ -148,11 +190,9 @@ export default function EcosystemNetwork({
     }
 
     function rotate(n: Node3D, ay: number, ax: number) {
-      // rotate around Y
       let x = n.ox * Math.cos(ay) + n.oz * Math.sin(ay);
       let z = -n.ox * Math.sin(ay) + n.oz * Math.cos(ay);
       const y0 = n.oy;
-      // rotate around X
       const y = y0 * Math.cos(ax) - z * Math.sin(ax);
       z = y0 * Math.sin(ax) + z * Math.cos(ax);
       return { x, y, z };
@@ -169,7 +209,6 @@ export default function EcosystemNetwork({
       };
     }
 
-    // Map a raw perspective scale to a 0..1 "closeness" value.
     function closeness(scale: number) {
       const t = (scale - minScale) / (maxScale - minScale);
       return Math.min(1, Math.max(0, t));
@@ -180,6 +219,29 @@ export default function EcosystemNetwork({
 
       const ax = Math.sin(time * 0.00025) * 0.2;
       const projected = nodes.map((n) => project(rotate(n, angleY, ax)));
+
+      // Update hover: find nearest branch node within HIT_RADIUS of the mouse.
+      hovered = null;
+      if (labels && mouseX > -9000) {
+        let bestDist = HIT_RADIUS;
+        for (let i = 0; i < nodes.length; i++) {
+          const n = nodes[i];
+          if (n.kind !== "branch") continue;
+          const p = projected[i];
+          const dx = p.x - mouseX;
+          const dy = p.y - mouseY;
+          const d = Math.sqrt(dx * dx + dy * dy);
+          if (d < bestDist) {
+            bestDist = d;
+            hovered = n.cluster;
+          }
+        }
+      }
+
+      // How much to boost the hovered cluster's alpha, and how much to
+      // dim everything else. Only active when hover interaction is on.
+      const boost = hovered !== null ? 3 : 1;
+      const dim = hovered !== null ? 0.35 : 1;
 
       // edges, farthest first
       const edgeOrder = edges
@@ -194,8 +256,13 @@ export default function EcosystemNetwork({
         const a = projected[e.a];
         const b = projected[e.b];
         const c = closeness((a.scale + b.scale) / 2);
-        const alpha = (e.weak ? 0.05 + c * 0.12 : 0.1 + c * 0.22) * opacityScale;
-        ctx!.strokeStyle = `rgba(${e.color}, ${alpha})`;
+        const isHovered = hovered !== null && e.cluster === hovered;
+        const clusterMult = hovered === null ? 1 : isHovered ? boost : dim;
+        const alpha =
+          (e.weak ? 0.05 + c * 0.12 : 0.1 + c * 0.22) *
+          opacityScale *
+          clusterMult;
+        ctx!.strokeStyle = `rgba(${e.color}, ${Math.min(alpha, 1)})`;
         ctx!.lineWidth = e.weak ? 1 : 1.2 + c * 0.8;
         if (e.weak) ctx!.setLineDash([2, 4]);
         else ctx!.setLineDash([]);
@@ -214,14 +281,61 @@ export default function EcosystemNetwork({
       for (const { n, i } of nodeOrder) {
         const p = projected[i];
         const c = closeness(p.scale);
+        const isHovered =
+          hovered !== null && n.cluster === hovered && n.kind !== "hub";
+        const clusterMult =
+          hovered === null || n.kind === "hub"
+            ? 1
+            : n.cluster === hovered
+              ? boost
+              : dim;
         const baseR = n.kind === "hub" ? 14 : n.kind === "branch" ? 8.5 : 5.8;
-        const r = baseR * (0.65 + c * 0.9);
+        const r = baseR * (0.65 + c * 0.9) * (isHovered ? 1.25 : 1);
         const alpha =
-          (n.kind === "hub" ? 0.45 + c * 0.3 : 0.28 + c * 0.32) * opacityScale;
-        ctx!.fillStyle = `rgba(${n.color}, ${alpha})`;
+          (n.kind === "hub" ? 0.45 + c * 0.3 : 0.28 + c * 0.32) *
+          opacityScale *
+          clusterMult;
+        ctx!.fillStyle = `rgba(${n.color}, ${Math.min(alpha, 1)})`;
         ctx!.beginPath();
         ctx!.arc(p.x, p.y, r, 0, Math.PI * 2);
         ctx!.fill();
+      }
+
+      // Labels: always draw a small always-visible name near each cluster's
+      // branch node; when a cluster is hovered, also draw its metric
+      // callout in a light card. Labels use their own alpha so a very
+      // low `opacityScale` doesn't hide them.
+      if (labels) {
+        for (let i = 0; i < nodes.length; i++) {
+          const n = nodes[i];
+          if (n.kind !== "branch") continue;
+          const label = labels[n.cluster];
+          if (!label) continue;
+          const p = projected[i];
+          // Only draw labels for clusters that are facing the camera
+          // (front hemisphere) so they don't clutter the back.
+          if (p.scale < (minScale + maxScale) / 2 * 0.9) continue;
+
+          const isThisHovered = hovered === n.cluster;
+          const labelAlpha = isThisHovered ? 0.95 : 0.55;
+          ctx!.font = "500 11px ui-monospace, monospace";
+          ctx!.textBaseline = "middle";
+          ctx!.textAlign = "left";
+          const offsetX = p.x > width / 2 ? -14 : 14;
+          const anchorX = p.x + offsetX;
+          const anchorY = p.y;
+          if (offsetX < 0) ctx!.textAlign = "right";
+          ctx!.fillStyle = `rgba(${n.color}, ${labelAlpha})`;
+          ctx!.fillText(label.name.toUpperCase(), anchorX, anchorY);
+
+          // Metric callout on hover
+          if (isThisHovered) {
+            ctx!.font = "500 12px ui-monospace, monospace";
+            const metricY = anchorY + 16;
+            ctx!.fillStyle = `rgba(27, 30, 36, 0.85)`;
+            ctx!.fillText(label.metric, anchorX, metricY);
+          }
+        }
       }
     }
 
@@ -233,6 +347,20 @@ export default function EcosystemNetwork({
       rafId = requestAnimationFrame(step);
     }
 
+    function onMouseMove(e: MouseEvent) {
+      const rect = canvas!.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+      // Force a redraw if we're not animating so hover still lights up.
+      if (reduceMotion) draw(0);
+    }
+
+    function onMouseLeave() {
+      mouseX = -9999;
+      mouseY = -9999;
+      if (reduceMotion) draw(0);
+    }
+
     buildGraph();
     seed();
     draw(0);
@@ -242,14 +370,23 @@ export default function EcosystemNetwork({
 
     const onResize = () => seed();
     window.addEventListener("resize", onResize);
+    canvas.addEventListener("mousemove", onMouseMove);
+    canvas.addEventListener("mouseleave", onMouseLeave);
 
     return () => {
       window.removeEventListener("resize", onResize);
+      canvas.removeEventListener("mousemove", onMouseMove);
+      canvas.removeEventListener("mouseleave", onMouseLeave);
       cancelAnimationFrame(rafId);
     };
-  }, [animate, opacityScale, branchCount, seedAngle]);
+  }, [animate, opacityScale, effectiveBranchCount, seedAngle, labels]);
 
   return (
-    <canvas ref={canvasRef} aria-hidden="true" className="h-full w-full" />
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className="h-full w-full"
+      style={labels ? { cursor: "default" } : undefined}
+    />
   );
 }

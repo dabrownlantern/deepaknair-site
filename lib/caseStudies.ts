@@ -12,6 +12,9 @@ export type CaseStudy = {
   whatIDid: string;
   outcome: string;
   whatTransfers: string;
+  // hex color matching the cluster this case study represents in the hero
+  // ecosystem network — visually threads the abstract graph to the concrete work.
+  clusterColor: string;
 };
 
 export const caseStudies: CaseStudy[] = [
@@ -33,6 +36,7 @@ export const caseStudies: CaseStudy[] = [
       "The creator base grew from a few hundred to more than 3 million. The live events system drove 500M+ plays. The accelerator graduated Adopt Me and Flee the Facility.",
     whatTransfers:
       "Discovery and early recognition are the retention strategy. Monetization only compounds what discovery makes possible. If your program is leaking creators, look at whether they can be seen before you look at whether they can be paid.",
+    clusterColor: "#9C5D0A",
   },
   {
     slug: "epic",
@@ -52,6 +56,7 @@ export const caseStudies: CaseStudy[] = [
       "Creators grew from 10K to 100K. The brand integrations shipped at 100% on-time.",
     whatTransfers:
       "An ecosystem scales through creator success, not through acquiring creators one at a time. Build the systems that make each creator more likely to win, and growth becomes a consequence rather than a target.",
+    clusterColor: "#3F7A5B",
   },
   {
     slug: "nitrate-games",
@@ -71,6 +76,7 @@ export const caseStudies: CaseStudy[] = [
       "A licensed-IP slate with a coherent publishing strategy and a public SDCC announce, executed as a fractional engagement rather than a full-time hire.",
     whatTransfers:
       "A launch is a system of decisions made months early, not a marketing push at the end. The studios that win the launch window decided how they'd win it a quarter before anyone saw a trailer.",
+    clusterColor: "#A35C57",
   },
 ];
 

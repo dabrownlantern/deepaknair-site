@@ -7,6 +7,9 @@ export type Service = {
   investment: string;
   // which home "problem" this service answers
   problem: string;
+  // the "cost of the alternative" line shown under the problem on the home page,
+  // so the price of this service is anchored against something concrete.
+  costOfAlternative: string;
 };
 
 export const services: Service[] = [
@@ -20,6 +23,8 @@ export const services: Service[] = [
     investment: "from $15K",
     problem:
       "Your creator program isn't retaining. You launched, you got a spike, the middle class of creators never formed.",
+    costOfAlternative:
+      "A wrong VP Creator hire runs $300K salary + 9 months to detect. An audit runs $15K and 3 weeks.",
   },
   {
     slug: "launch-gtm-strategy",
@@ -31,6 +36,8 @@ export const services: Service[] = [
     investment: "Let's talk",
     problem:
       "You're entering UGC and don't know where to start. Roblox, Fortnite, or neither. Owned world or integration. Which creators, which studios, what budget.",
+    costOfAlternative:
+      "A wrong platform bet burns $500K+ in build time. Deciding right up front is a fraction of that.",
   },
   {
     slug: "game-launch-advisory",
@@ -42,6 +49,8 @@ export const services: Service[] = [
     investment: "from $20K",
     problem:
       "You're weeks from a Steam or console launch with no publishing muscle. Wishlists, Next Fest, creator seeding, launch window — all still undecided this late.",
+    costOfAlternative:
+      "The median indie makes 80%+ of lifetime revenue in the first 30 days. Miss that window, you don't get it back.",
   },
   {
     slug: "fractional-creator-lead",
@@ -53,5 +62,7 @@ export const services: Service[] = [
     investment: "Let's talk",
     problem:
       "You need someone accountable for the creator or community number every week — not a deck delivered once and left behind.",
+    costOfAlternative:
+      "A full-time creator lead is $200K+ salary and equity. Fractional buys the same accountability without the commitment.",
   },
 ];
