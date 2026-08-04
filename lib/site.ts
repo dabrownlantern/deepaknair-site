@@ -3,8 +3,7 @@
 export const site = {
   name: "Deepak Nair",
   role: "Creator ecosystem strategy",
-  // TODO: replace with your real Cal.com link, e.g. "https://cal.com/deepaknair/30min"
-  bookingUrl: "#book",
+  bookingUrl: "https://calendly.com/deepak-nair17/30min",
   bookingLabel: "Book a call",
   email: "deepak.nair17@gmail.com",
   domain: "deepaknair.com",

@@ -6,10 +6,10 @@ import { site } from "@/lib/site";
 // the iframe's internals.
 export default function NewsletterSignup() {
   return (
-    <div className="border border-rule bg-surface/90 p-6 md:p-8">
-      <p className="eyebrow">Get new posts by email</p>
+    <div className="border border-rule bg-surface p-6 md:p-8">
+      <p className="eyebrow">Compounding — the newsletter</p>
       <h3 className="mt-3 font-display text-h3 text-paper">
-        No spam, no drip sequence. Just the next post when it's ready.
+        Notes on building creator programs that compound. Every 2–3 weeks.
       </h3>
       <div className="mt-5 overflow-hidden rounded">
         <iframe

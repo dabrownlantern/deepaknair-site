@@ -12,11 +12,24 @@ import { site, proof } from "@/lib/site";
 
 // Order must match the PALETTE array in EcosystemNetwork.tsx so each
 // cluster's color visually matches the case-study card of the same name.
+// `href` makes a cluster clickable → navigates to the case study.
 const heroClusters: ClusterLabel[] = [
-  { name: "Roblox", metric: "few hundred → 3M+ creators" },
-  { name: "Fortnite Creative", metric: "10K → 100K creators" },
-  { name: "Meta Horizon", metric: "2K → 20K creators" },
-  { name: "Nitrate Games", metric: "SDCC announce, fractional VP" },
+  {
+    name: "Roblox",
+    metric: "few hundred → 3M+ creators — click to read",
+    href: "/work/roblox",
+  },
+  {
+    name: "Fortnite Creative",
+    metric: "10K → 100K creators — click to read",
+    href: "/work/epic",
+  },
+  { name: "Meta Horizon", metric: "2K → 20K creators (case study coming)" },
+  {
+    name: "Nitrate Games",
+    metric: "SDCC announce, fractional VP — click to read",
+    href: "/work/nitrate-games",
+  },
 ];
 
 export default function HomePage() {
@@ -54,7 +67,7 @@ export default function HomePage() {
                 <EcosystemNetwork labels={heroClusters} />
               </div>
               <p className="mt-3 font-mono text-label uppercase tracking-[0.1em] text-paper/50">
-                Hover a cluster for what I built there
+                Hover a cluster for the metric. Click to open the case study.
               </p>
             </div>
           </div>
@@ -189,7 +202,7 @@ export default function HomePage() {
                 </Link>
               ))}
             </div>
-            <div className="mt-6 max-w-md">
+            <div className="mx-auto mt-10 max-w-xl">
               <NewsletterSignup />
             </div>
           </div>

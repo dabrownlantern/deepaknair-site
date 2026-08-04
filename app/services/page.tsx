@@ -5,7 +5,7 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "Four products: Ecosystem Audit, Launch & GTM Strategy, Game Launch & Publishing Advisory, and Fractional Creator Lead. Named, scoped, and priced.",
+    "Four products: Ecosystem Audit, Launch & GTM Strategy, Game Launch & Publishing Advisory, and Fractional Creator Lead. Scoped, outcomes-first.",
 };
 
 export default function ServicesPage() {
@@ -45,6 +45,10 @@ export default function ServicesPage() {
 
               <div className="grid gap-6">
                 <div className="grid grid-cols-[8rem_1fr] gap-4 border-t border-rule pt-4">
+                  <span className="meta">Value</span>
+                  <span className="text-lead text-paper">{s.value}</span>
+                </div>
+                <div className="grid grid-cols-[8rem_1fr] gap-4 border-t border-rule pt-4">
                   <span className="meta">Length</span>
                   <span className="text-base text-paper/85">{s.length}</span>
                 </div>
@@ -54,8 +58,9 @@ export default function ServicesPage() {
                 </div>
                 <div className="grid grid-cols-[8rem_1fr] gap-4 border-t border-rule pt-4">
                   <span className="meta">Investment</span>
-                  <span className="font-display text-h3 text-signal">
-                    {s.investment}
+                  <span className="text-base text-paper/85">
+                    Scoped per engagement — book a call and we&apos;ll figure
+                    out what&apos;s actually needed.
                   </span>
                 </div>
               </div>
@@ -68,8 +73,9 @@ export default function ServicesPage() {
       <section className="rule-t bg-surface/40">
         <div className="container-x py-16 md:py-20">
           <p className="mx-auto max-w-3xl text-center font-display text-h2 text-paper">
-            Engagements start at $15K. If your problem is smaller than that, tell
-            me anyway and I&apos;ll point you somewhere useful.
+            Every engagement is scoped to the problem. Bring yours and
+            we&apos;ll figure out the right shape together — including whether
+            I&apos;m the right person for it.
           </p>
           <div className="mt-10 flex justify-center">
             <a href={site.bookingUrl} className="btn-primary">

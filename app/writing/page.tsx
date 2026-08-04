@@ -23,7 +23,7 @@ export default function WritingPage() {
           Notes from a decade on the side of the business that decides whether
           creators actually succeed.
         </p>
-        <div className="mt-8 max-w-md">
+        <div className="mt-8 max-w-xl">
           <NewsletterSignup />
         </div>
       </section>

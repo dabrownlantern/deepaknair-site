@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 
 type Kind = "hub" | "branch" | "leaf";
@@ -26,6 +27,9 @@ type Edge = {
 export type ClusterLabel = {
   name: string;
   metric: string;
+  // When set, the cluster is clickable and navigates here on click.
+  // Typically a case-study URL so the visualization doubles as navigation.
+  href?: string;
 };
 
 const HUB_COLOR = "156, 93, 10"; // signal amber — the hub is the brand center
@@ -79,6 +83,7 @@ export default function EcosystemNetwork({
   seedAngle = 0.4,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const router = useRouter();
 
   const effectiveBranchCount = labels ? labels.length : (branchCount ?? 8);
 
@@ -301,10 +306,10 @@ export default function EcosystemNetwork({
         ctx!.fill();
       }
 
-      // Labels: always draw a small always-visible name near each cluster's
-      // branch node; when a cluster is hovered, also draw its metric
-      // callout in a light card. Labels use their own alpha so a very
-      // low `opacityScale` doesn't hide them.
+      // Labels: draw ALL cluster names, always. Front-facing clusters
+      // (positive rotated z) get full-strength labels; back-facing ones
+      // are dimmed so depth still reads without hiding them. On hover,
+      // the metric appears below the name as a callout.
       if (labels) {
         for (let i = 0; i < nodes.length; i++) {
           const n = nodes[i];
@@ -312,28 +317,50 @@ export default function EcosystemNetwork({
           const label = labels[n.cluster];
           if (!label) continue;
           const p = projected[i];
-          // Only draw labels for clusters that are facing the camera
-          // (front hemisphere) so they don't clutter the back.
-          if (p.scale < (minScale + maxScale) / 2 * 0.9) continue;
-
+          const isFront = p.scale >= 1; // 1 = at equator; >1 = closer than center
           const isThisHovered = hovered === n.cluster;
-          const labelAlpha = isThisHovered ? 0.95 : 0.55;
-          ctx!.font = "500 11px ui-monospace, monospace";
+          const nameAlpha = isThisHovered ? 1 : isFront ? 0.85 : 0.4;
+
+          ctx!.font = "600 11px ui-monospace, monospace";
           ctx!.textBaseline = "middle";
-          ctx!.textAlign = "left";
-          const offsetX = p.x > width / 2 ? -14 : 14;
+          const offsetX = p.x > width / 2 ? -18 : 18;
           const anchorX = p.x + offsetX;
           const anchorY = p.y;
-          if (offsetX < 0) ctx!.textAlign = "right";
-          ctx!.fillStyle = `rgba(${n.color}, ${labelAlpha})`;
-          ctx!.fillText(label.name.toUpperCase(), anchorX, anchorY);
+          ctx!.textAlign = offsetX < 0 ? "right" : "left";
+
+          const nameText = label.name.toUpperCase();
+          // Backdrop pill for readability against the moving graph.
+          const padX = 6;
+          const padY = 3;
+          const metrics = ctx!.measureText(nameText);
+          const textW = metrics.width;
+          const boxX = offsetX < 0 ? anchorX - textW - padX : anchorX - padX;
+          const boxY = anchorY - 8 - padY;
+          const boxW = textW + padX * 2;
+          const boxH = 16 + padY * 2;
+          ctx!.fillStyle = `rgba(255, 255, 255, ${
+            isThisHovered ? 0.92 : isFront ? 0.75 : 0.45
+          })`;
+          ctx!.fillRect(boxX, boxY, boxW, boxH);
+
+          ctx!.fillStyle = `rgba(${n.color}, ${nameAlpha})`;
+          ctx!.fillText(nameText, anchorX, anchorY);
 
           // Metric callout on hover
           if (isThisHovered) {
             ctx!.font = "500 12px ui-monospace, monospace";
-            const metricY = anchorY + 16;
-            ctx!.fillStyle = `rgba(27, 30, 36, 0.85)`;
-            ctx!.fillText(label.metric, anchorX, metricY);
+            const metricText = label.metric;
+            const metricY = anchorY + 22;
+            const mMetrics = ctx!.measureText(metricText);
+            const mW = mMetrics.width;
+            const mBoxX = offsetX < 0 ? anchorX - mW - padX : anchorX - padX;
+            const mBoxY = metricY - 8 - padY;
+            const mBoxW = mW + padX * 2;
+            const mBoxH = 16 + padY * 2;
+            ctx!.fillStyle = "rgba(255, 255, 255, 0.95)";
+            ctx!.fillRect(mBoxX, mBoxY, mBoxW, mBoxH);
+            ctx!.fillStyle = "rgba(27, 30, 36, 0.9)";
+            ctx!.fillText(metricText, anchorX, metricY);
           }
         }
       }
@@ -351,14 +378,25 @@ export default function EcosystemNetwork({
       const rect = canvas!.getBoundingClientRect();
       mouseX = e.clientX - rect.left;
       mouseY = e.clientY - rect.top;
-      // Force a redraw if we're not animating so hover still lights up.
+      // Reflect click affordance in the cursor when the hovered cluster
+      // has an href attached.
+      const hoveredHref =
+        hovered !== null && labels && labels[hovered]?.href;
+      canvas!.style.cursor = hoveredHref ? "pointer" : "default";
       if (reduceMotion) draw(0);
     }
 
     function onMouseLeave() {
       mouseX = -9999;
       mouseY = -9999;
+      canvas!.style.cursor = "default";
       if (reduceMotion) draw(0);
+    }
+
+    function onClick() {
+      if (hovered === null || !labels) return;
+      const href = labels[hovered]?.href;
+      if (href) router.push(href);
     }
 
     buildGraph();
@@ -372,14 +410,16 @@ export default function EcosystemNetwork({
     window.addEventListener("resize", onResize);
     canvas.addEventListener("mousemove", onMouseMove);
     canvas.addEventListener("mouseleave", onMouseLeave);
+    canvas.addEventListener("click", onClick);
 
     return () => {
       window.removeEventListener("resize", onResize);
       canvas.removeEventListener("mousemove", onMouseMove);
       canvas.removeEventListener("mouseleave", onMouseLeave);
+      canvas.removeEventListener("click", onClick);
       cancelAnimationFrame(rafId);
     };
-  }, [animate, opacityScale, effectiveBranchCount, seedAngle, labels]);
+  }, [animate, opacityScale, effectiveBranchCount, seedAngle, labels, router]);
 
   return (
     <canvas
